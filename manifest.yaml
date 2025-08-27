@@ -1,0 +1,26 @@
+region: us-west-1
+version: 2021-03-15
+
+resources:
+  - name: dev-rds-ec2-full-access
+    description: "SCP to allow RDS and EC2 full access for Dev account"
+    resource_file: policies/dev-rds-ec2-full-access.json
+    deploy_method: scp
+    deployment_targets:
+      accounts:
+        - "597918493515"  # Dev account ID as a string is safer
+      organizational_units:
+        - MemberOU       # Your actual OU name, ensure this matches exactly
+
+  - name: dev-vpc
+    description: "Deploy VPC CloudFormation template for Dev account"
+    resource_file: templates/vpc.yaml
+    deploy_method: stack_set
+    deployment_targets:
+      accounts:
+        - "597918493515"  # Dev account ID as string
+    parameters:
+      - parameter_key: EnvironmentName
+        parameter_value: dev-vpc
+    regions:
+      - us-west-1
